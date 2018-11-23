@@ -13,7 +13,7 @@
 	}
 %>
 <html>
-<title>W3.CSS Template</title>
+<title>Your contacts</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/w3.css">
@@ -87,7 +87,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: 'Acme', sans-serif;}
             <div class="col">
               <div class="info-header mb-5">
                 <h1 class="text-primary mt-5 pb-3">
-                  My Activities
+                  My Contacts
                 </h1>
                 <p class="lead pb-3">
                   Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet omnis fuga maiores excepturi dolores explicabo.
@@ -113,8 +113,8 @@ html,body,h1,h2,h3,h4,h5 {font-family: 'Acme', sans-serif;}
 
 <%
 
-ArrayList<Integer> user_id_list=new ArrayList();
-ArrayList<UserDTO> udto= new ArrayList();
+ArrayList<Integer> user_id_list=new ArrayList<>();
+ArrayList<UserDTO> udto= new ArrayList<>();
 user_id_list=new ContactDAO().getContactList((int)session.getAttribute("user_id"));
 UserDAO dao=new UserDAO();
 if(user_id_list!=null){

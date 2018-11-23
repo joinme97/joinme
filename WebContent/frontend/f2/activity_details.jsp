@@ -28,7 +28,7 @@
 		}
 	} else//to check reques is coming from the page->activity_datails
 	if (!"details".equals(request.getParameter("show_details"))
-			|| !request.getMethod().equalsIgnoreCase("post")) {
+			|| request.getMethod().equalsIgnoreCase("post")) {
 %>
 <jsp:forward page="home.jsp"></jsp:forward>
 <%
@@ -196,22 +196,25 @@ status; -->
 							<div class="col text-center">
 								<div class="card">
 									<div class="card-body">
-										<img src="pics/0 (<%= new Random().nextInt(1000)%150%>).jpg"  alt=""
-											class="img-fluid rounded-circle  mb-3">
+										<img src="pics/0 (<%=new Random().nextInt(1000) % 150%>).jpg"
+											alt="" class="img-fluid rounded-circle  mb-3">
 
 
-													<%
-													if(!new SelectedActivityListDAO().userIDANDActivityIDExist((int)session.getAttribute("user_id"),Integer.parseInt(request.getParameter("activity_id")))){
-														%>
-														<form action="activity_details.jsp" method="post">
-														<div class="p-4">
-															<input type="hidden" name="activity_id"value=<%=adto.getActivity_id()%>>
-															 <input class="btn btn-dark" type="submit" name="add_activity" value="add">
-														</div>
-													</form>
-													<% 
-													}
-													%>
+										<%
+											if (!new SelectedActivityListDAO().userIDANDActivityIDExist((int) session.getAttribute("user_id"),
+													Integer.parseInt(request.getParameter("activity_id")))) {
+										%>
+										<form action="activity_details.jsp" method="post">
+											<div class="p-4">
+												<input type="hidden" name="activity_id"
+													value=<%=adto.getActivity_id()%>> <input
+													class="btn btn-dark" type="submit" name="add_activity"
+													value="add">
+											</div>
+										</form>
+										<%
+											}
+										%>
 
 
 										<div class="p-4">
@@ -244,7 +247,7 @@ status; -->
 										<form action="">
 											<div class="form-group">
 												<h4 class="text-sm-left">Comments :</h4>
-												<textarea type="text" class="form-control form-control-lg"
+												<textarea class="form-control form-control-lg"
 													placeholder="Your Comments"></textarea>
 											</div>
 										</form>

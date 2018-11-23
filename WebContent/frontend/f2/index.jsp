@@ -190,7 +190,7 @@ body {
 							<input type="submit" name="submit" class="button" value="sign_up">
 						</div>
 						<div class="foot-lnk">
-							<label for="tab-1">Already Member?</a>
+							<label for="tab-1">Already Member?</label>
 						</div>
 					</div>
 				</form>	

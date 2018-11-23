@@ -115,10 +115,6 @@ public class CreatedActivityListDAO {
 		}
 	}
 
-	public static void main(String[] args) {
-		System.out.println(new CreatedActivityListDAO().incrementCount(34));
-	}
-
 	public int getCount(int activity_id) {
 		int count = -1;
 		try {
@@ -310,7 +306,7 @@ public class CreatedActivityListDAO {
 			return al;
 		}
 	}
-	
+
 	public ArrayList<CreatedActivityListDTO> getAllCreatedActivityListWithTagName(String tag_name) {
 		ArrayList<CreatedActivityListDTO> al = new ArrayList<>();
 		CreatedActivityListDTO dto = null;
@@ -346,5 +342,93 @@ public class CreatedActivityListDAO {
 			conn = null;
 			return al;
 		}
+	}
+
+	public ArrayList<String> getAllActivityName() {
+		ArrayList<String> al = new ArrayList<>();
+		try {
+			if (conn == null) {
+				conn = JoinMeDB.getConnection();
+			}
+			String query = "select activity_name from created_activity_list";
+			ps = conn.prepareStatement(query);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				al.add("\"" + rs.getString("activity_name") + "\"");
+			}
+		} catch (Exception e) {
+			System.out.println("+++Exception in getAllActivityName:" + e);
+		} finally {
+			if (al.isEmpty()) {
+				al = null;
+			}
+			ps = null;
+			rs = null;
+			conn = null;
+			return al;
+		}
+	}
+
+	public ArrayList<CreatedActivityListDTO> getRequestedActivities(String requested_activity_name) {
+		ArrayList<CreatedActivityListDTO> al = new ArrayList<>();
+		CreatedActivityListDTO dto = null;
+		try {
+			if (conn == null) {
+				conn = JoinMeDB.getConnection();
+			}
+			String query = "select * from created_activity_list where activity_name like '%" + requested_activity_name
+					+ "%'";
+			ps = conn.prepareStatement(query);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				dto = new CreatedActivityListDTO();
+				dto.setActivity_date(rs.getString("activity_date"));
+				dto.setActivity_id(rs.getInt("activity_id"));
+				dto.setActivity_name(rs.getString("activity_name"));
+				dto.setCost(rs.getInt("cost"));
+				dto.setCreated_datetime(rs.getString("created_datetime"));
+				dto.setActivity_description(rs.getString("Activity_description"));
+				dto.setStatus(rs.getString("status").charAt(0));
+				dto.setTag_id(rs.getInt("tag_id"));
+				dto.setUser_id(rs.getInt("user_id"));
+				al.add(dto);
+			}
+		} catch (Exception e) {
+			System.out.println("+++Exception in getAllCreatedActivityListWithTagName:" + e);
+		} finally {
+			if (al.isEmpty()) {
+				al = null;
+			}
+			ps = null;
+			rs = null;
+			conn = null;
+			return al;
+		}
+	}
+
+	public int checkActivity(String activity_name) {
+		int activity_id = 0;
+		try {
+			if (conn == null) {
+				conn = JoinMeDB.getConnection();
+			}
+			String query = "select activity_id from created_activity_list where activity_name like '%" + activity_name + "%'";
+			ps = conn.prepareStatement(query);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				activity_id = rs.getInt("activity_id");
+			}
+		} catch (Exception e) {
+			System.out.println("+++Exception in checkActivity:" + e);
+		} finally {
+			ps = null;
+			rs = null;
+			conn = null;
+			return activity_id;
+		}
+	}
+
+	public static void main(String[] args) {
+		System.out.println(new CreatedActivityListDAO().checkActivity("learn sql"));
 	}
 }

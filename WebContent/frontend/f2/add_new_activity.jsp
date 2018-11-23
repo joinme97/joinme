@@ -1,6 +1,6 @@
 <!DOCTYPE html>
+<%@page import="com.sjl.joinme.activity_request.ActivityRequestDAO"%>
 <%
-	
 	if (session.getAttribute("user_id") == null) {
 		session.setAttribute("user_id", 70);
 	}
@@ -28,8 +28,9 @@
 	new TagsDAO().addTags(tdto);
 		adto.setTag_id(new TagsDAO().tagNameToTagID(request.getParameter("tag")));
 		System.out.println(new TagsDAO().tagNameToTagID(request.getParameter("tag")));
+		new ActivityRequestDAO().checkRequestedActivities(adto.getActivity_name());
 		new CreatedActivityListDAO().addCreatedActivityList(adto);
-
+		response.sendRedirect("my_activities.jsp");
 	}
 %>
 
@@ -40,7 +41,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>Document</title>
+<title>Add New Activity</title>
 <link rel="stylesheet" href="css/w3.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -251,8 +252,9 @@ html, body {
 
 
 										<div class="form-group">
-											<input type="datetime-local" class="form-control form-control-lg"
-												name="activity_date" placeholder="dateandtime">
+											<input type="datetime-local"
+												class="form-control form-control-lg" name="activity_date"
+												placeholder="dateandtime">
 										</div>
 
 
@@ -262,7 +264,8 @@ html, body {
 											placeholder="lat"> <input type="text" name="lng"
 											class="form-control form-control-lg" id="long"
 											placeholder="lng"> <input type="hidden"
-											name="user_id" value=<%=(int)session.getAttribute("user_id")%>>
+											name="user_id"
+											value=<%=(int) session.getAttribute("user_id")%>>
 
 										<div class="form-group">
 											<input type="text" class="form-control form-control-lg"

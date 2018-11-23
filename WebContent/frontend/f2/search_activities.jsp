@@ -158,9 +158,9 @@ html, body, h1, h2, h3, h4, h5 {
 							method="post">
 							<div class="autocomplete" style="width: 300px;">
 								<input id="myInput" type="text" name="tag"
-									placeholder="Select Activities">
+									placeholder="Search Activities">
 							</div>
-							<input type="submit">
+							<input type="submit" value="Search">
 						</form>
 					</div>
 					<!--end of col-->
@@ -202,10 +202,13 @@ html, body, h1, h2, h3, h4, h5 {
 									<p><%=tdto.getTag_description()%></p>
 									<div class="d-flex flex-row justify-content-center">
 										<div class="p-4">
-											<input type="hidden" name="tag_id"
-												value=<%=tdto.getTag_id()%>> <input
+											<input type="hidden" name="id"
+												value="<%=tdto.getTag_id()%>">
+											<input type="hidden" name="name"
+												value="<%=tdto.getTag()%>">
+											<input
 												class="btn btn-dark" type="submit" name="show_activities"
-												value="view">
+												value="View">
 										</div>
 									</div>
 								</form>
@@ -220,7 +223,7 @@ html, body, h1, h2, h3, h4, h5 {
 							String tag = request.getParameter("tag");
 							ArrayList<CreatedActivityListDTO> al = new ArrayList<>();
 							al = new CreatedActivityListDAO().getAllCreatedActivityListWithTagName(tag);
-							if (al != null) {
+							if (al.isEmpty() == false) {
 					%>
 					<div class="container">
 						<div class="row">

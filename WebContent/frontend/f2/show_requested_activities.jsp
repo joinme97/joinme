@@ -12,7 +12,7 @@
 	}
 %>
 <html>
-<title>show all activities</title>
+<title>Requested Activities</title>
 
 <!-- Search files starts here -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -97,8 +97,8 @@ html, body, h1, h2, h3, h4, h5 {
 				<span>Welcome,<br><%=session.getAttribute("first_name")%></span><br>
 				<!-- //////////////////////////////////////////////////////////////need to change above -->
 				<!-- <a href="#" class="w3-bar-item w3-button"><i class="fa fa-envelope"></i></a>
-      <a href="#" class="w3-bar-item w3-button"><i class="fa fa-user"></i></a>
-      <a href="#" class="w3-bar-item w3-button"><i class="fa fa-cog"></i></a> -->
+					      <a href="#" class="w3-bar-item w3-button"><i class="fa fa-user"></i></a>
+					      <a href="#" class="w3-bar-item w3-button"><i class="fa fa-cog"></i></a> -->
 			</div>
 		</div>
 		<hr>
@@ -173,38 +173,41 @@ html, body, h1, h2, h3, h4, h5 {
 			</div>
 			<!-- Search Box Completed -->
 
+
+
+			<%
+				ArrayList<CreatedActivityListDTO> al = new CreatedActivityListDAO()
+						.getRequestedActivities(request.getParameter("name"));
+				if (!al.isEmpty()) {
+			%>
 			<div class="container">
 				<div class="row">
 					<div class="col">
 						<div class="info-header mb-5">
 							<h2 class="text-primary mt-5 pb-3"><%=request.getParameter("name").toUpperCase()%></h2>
-							<p class="lead pb-3"></p>
+							<p class="lead pb-3">Here are the activities requested by
+								you.....</p>
 						</div>
 					</div>
 				</div>
 				<div class="row">
-
 					<%
-						ArrayList<CreatedActivityListDTO> alADTO = new ArrayList<>();
-						CreatedActivityListDAO adao = new CreatedActivityListDAO();
-						alADTO = adao.getAllCreatedActivityListWithTagID(Integer.parseInt(request.getParameter("id")));
-						if (alADTO.isEmpty() == false) {
-							for (CreatedActivityListDTO adto : alADTO) {
+						for (CreatedActivityListDTO dto : al) {
 					%>
 
 					<div class="col-lg-3 col-md-6">
 						<div class="card">
 							<div class="card-body">
 								<form action="activity_details.jsp" method="post">
-									<img src="pics/0 (<%=adto.getActivity_id() % 150%>).jpg" alt=""
+									<img src="pics/0 (<%=dto.getActivity_id() % 150%>).jpg" alt=""
 										class="img-fluid rounded-circle w-50 mb-3">
-									<h3><%=adto.getActivity_name()%></h3>
+									<h3><%=dto.getActivity_name()%></h3>
 									<h5 class="text-muted"></h5>
-									<p><%=adto.getActivity_description()%></p>
+									<p><%=dto.getActivity_description()%></p>
 									<div class="d-flex flex-row justify-content-center">
 										<div class="p-4">
 											<input type="hidden" name="activity_id"
-												value=<%=adto.getActivity_id()%>> <input
+												value=<%=dto.getActivity_id()%>> <input
 												class="btn btn-dark" type="submit" name="show_details"
 												value="details">
 										</div>
@@ -217,54 +220,14 @@ html, body, h1, h2, h3, h4, h5 {
 						}
 						}
 					%>
-
 				</div>
 			</div>
 		</section>
-		<!-- <div class="w3-row mt-3">
-      <div class="w3-col m2 text-center">
-        <img class="w3-circle" src="https://colorlib.com//polygon/admindek/files/assets/images/avatar-4.jpg">
-      </div>
-      <div class="w3-col m10 w3-container">
-        <h4>Sports <span class="w3-opacity w3-medium">Sep 29, 2014, 9:12 PM</span></h4>
-        <p class="lead"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br>
-      </div>
-    </div>
-    <div class="w3-row mt-3">
-      <div class="w3-col m2 text-center">
-        <img class="w3-circle" src="https://colorlib.com//polygon/admindek/files/assets/images/avatar-4.jpg">
-      </div>
-      <div class="w3-col m10 w3-container">
-        <h4>Sports <span class="w3-opacity w3-medium">Sep 29, 2014, 9:12 PM</span></h4>
-        <p class="lead"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br>
-      </div>
-    </div>
-    <div class="w3-row mt-3">
-      <div class="w3-col m2 text-center">
-        <img class="w3-circle" src="https://colorlib.com//polygon/admindek/files/assets/images/avatar-4.jpg">
-      </div>
-      <div class="w3-col m10 w3-container">
-        <h4>Sports <span class="w3-opacity w3-medium">Sep 29, 2014, 9:12 PM</span></h4>
-        <p class="lead"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br>
-      </div>
-    </div>
-    <div class="w3-row mt-3">
-      <div class="w3-col m2 text-center">
-        <img class="w3-circle" src="https://colorlib.com//polygon/admindek/files/assets/images/avatar-4.jpg">
-      </div>
-      <div class="w3-col m10 w3-container">
-        <h4>Sports <span class="w3-opacity w3-medium">Sep 29, 2014, 9:12 PM</span></h4>
-        <p class="lead"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br>
-      </div>
-    </div> -->
-
-
 
 
 		<!-- Footer -->
 		<footer class="w3-container w3-padding-16 w3-light-grey">
-			<h4>FOOTER</h4>
-
+			<h4></h4>
 		</footer>
 
 		<!-- End page content -->

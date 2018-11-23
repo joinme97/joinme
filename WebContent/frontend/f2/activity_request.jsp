@@ -1,24 +1,30 @@
-<!DOCTYPE html>
+
 <%@page
 	import="com.sjl.joinme.created_activity_list.CreatedActivityListDAO"%>
-<%@page
-	import="com.sjl.joinme.created_activity_list.CreatedActivityListDTO"%>
+<%@page import="com.sjl.joinme.activity_request.ActivityRequestDTO"%>
 <%@page import="java.util.ArrayList"%>
+<%@page import="com.sjl.joinme.activity_request.ActivityRequestDAO"%>
 <%
-	if (request.getParameter("show_activities") == null) {
+	if (request.getMethod().equalsIgnoreCase("post")) {
+		String requested_activity_name = request.getParameter("requested_activity_name");
+		int activity_id = new CreatedActivityListDAO().checkActivity(requested_activity_name);
+		if (activity_id > 0) {
+			response.sendRedirect("activity_details.jsp?activity_id=" + activity_id + "&show_details=details");
+		} else {
+			new ActivityRequestDAO().addActivityRequest((int) session.getAttribute("user_id"),
+					requested_activity_name);
+			response.sendRedirect("activity_request.jsp");
+		}
+	} else {
 %>
-<jsp:forward page="home.jsp"></jsp:forward>
-<%
-	}
-%>
+<!DOCTYPE html>
 <html>
-<title>show all activities</title>
+<title>Request Activity</title>
 
 <!-- Search files starts here -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link type="text/css" rel="stylesheet" href="search/style.css">
 <!-- Search files ends here -->
-
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -76,7 +82,7 @@ html, body, h1, h2, h3, h4, h5 {
 		<button
 			class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey"
 			onclick="w3_open();">
-			<i class="fa fa-bars"></i> Â Menu
+			<i class="fa fa-bars"></i>  Menu
 		</button>
 		<span class="w3-bar-item w3-right"><img class="w3-circle"
 			src="img/joinme.jpg" style="width: 50px;">JOIN ME!</span>
@@ -95,7 +101,6 @@ html, body, h1, h2, h3, h4, h5 {
 			</div>
 			<div class="w3-col s8 w3-bar">
 				<span>Welcome,<br><%=session.getAttribute("first_name")%></span><br>
-				<!-- //////////////////////////////////////////////////////////////need to change above -->
 				<!-- <a href="#" class="w3-bar-item w3-button"><i class="fa fa-envelope"></i></a>
       <a href="#" class="w3-bar-item w3-button"><i class="fa fa-user"></i></a>
       <a href="#" class="w3-bar-item w3-button"><i class="fa fa-cog"></i></a> -->
@@ -108,7 +113,7 @@ html, body, h1, h2, h3, h4, h5 {
 			<a href="#"
 				class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black"
 				onclick="w3_close()" title="close menu"><i
-				class="fas fa-user-alt"></i>Â  Close Menu</a> <a href="#"
+				class="fas fa-user-alt"></i>  Close Menu</a> <a href="#"
 				class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black"
 				onclick="w3_close()" title="close menu"><i
 				class="fas fa-user-alt"></i>Close Menu</a> <a href="home.jsp"
@@ -120,13 +125,15 @@ html, body, h1, h2, h3, h4, h5 {
 				class="w3-bar-item w3-button w3-padding"><i
 				class="fa fa-eye fa-fw"></i>Selected Activities</a> <a
 				href="search_activities.jsp"
-				class="w3-bar-item w3-button w3-padding w3-blue"><i
+				class="w3-bar-item w3-button w3-padding"><i
 				class="fa fa-search fa-fw"></i>Search Activities</a> <a
 				href="contacts.jsp" class="w3-bar-item w3-button w3-padding"><i
-				class="fa fa-users fa-fw"></i>My Contacts</a> <a href="logout.jsp"
+				class="fa fa-users fa-fw"></i>My Contacts</a> <a
+				href="activity_request.jsp"
+				class="w3-bar-item w3-button w3-padding w3-blue"><i
+				class="fa fa-users fa-fw"></i>Request Activity</a> <a href="logout.jsp"
 				class="w3-bar-item w3-button w3-padding"><i
 				class="fa fa-users fa-fw"></i>Logout</a>
-
 		</div>
 	</nav>
 
@@ -142,30 +149,34 @@ html, body, h1, h2, h3, h4, h5 {
 		<!-- Header -->
 
 
+
+
 		<section id="authors" class="my-5 text-center">
+
 			<div class="container">
 				<div class="row">
 					<div class="col">
 						<div class="info-header mb-5">
-							<h1 class="text-primary mt-5 pb-3">Search Activities</h1>
-							<p class="lead pb-3">Here you can have a search for activity
-								of your Interest...</p>
+							<h1 class="text-primary mt-5 pb-3">Request Activities</h1>
+							<p class="lead pb-3">Request for activities and get notified
+								when they are added by someone...</p>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<!-- Search Box -->
+
+			<!-- Request Box -->
 			<div class="container mb-3">
 				<div class="row justify-content-center">
 					<div class="col-12 col-md-10 col-lg-8">
-						<form autocomplete="off" action="search_activities.jsp"
+						<form autocomplete="off" action="activity_request.jsp"
 							method="post">
 							<div class="autocomplete" style="width: 300px;">
-								<input id="myInput" type="text" name="tag"
-									placeholder="Select Activities">
+								<input id="myInput" type="text" name="requested_activity_name"
+									placeholder="Activity name to request for">
 							</div>
-							<input type="submit">
+							<input type="submit" value="Request">
 						</form>
 					</div>
 					<!--end of col-->
@@ -173,98 +184,74 @@ html, body, h1, h2, h3, h4, h5 {
 			</div>
 			<!-- Search Box Completed -->
 
+			<%
+				ArrayList<ActivityRequestDTO> al = new ActivityRequestDAO()
+							.getRequestedActivityByID((int) session.getAttribute("user_id"));
+					if (al != null) {
+			%>
 			<div class="container">
 				<div class="row">
 					<div class="col">
 						<div class="info-header mb-5">
-							<h2 class="text-primary mt-5 pb-3"><%=request.getParameter("name").toUpperCase()%></h2>
-							<p class="lead pb-3"></p>
+							<h1 class="text-primary mt-5 pb-3">Requested Activity List</h1>
+							<p class="lead pb-3">Here goes the list of Requested
+								Activities.......</p>
 						</div>
 					</div>
 				</div>
 				<div class="row">
-
 					<%
-						ArrayList<CreatedActivityListDTO> alADTO = new ArrayList<>();
-						CreatedActivityListDAO adao = new CreatedActivityListDAO();
-						alADTO = adao.getAllCreatedActivityListWithTagID(Integer.parseInt(request.getParameter("id")));
-						if (alADTO.isEmpty() == false) {
-							for (CreatedActivityListDTO adto : alADTO) {
+						for (ActivityRequestDTO tdto : al) {
 					%>
-
 					<div class="col-lg-3 col-md-6">
 						<div class="card">
 							<div class="card-body">
-								<form action="activity_details.jsp" method="post">
-									<img src="pics/0 (<%=adto.getActivity_id() % 150%>).jpg" alt=""
-										class="img-fluid rounded-circle w-50 mb-3">
-									<h3><%=adto.getActivity_name()%></h3>
+								<form action="show_requested_activities.jsp" method="post">
+									<img
+										src="pics/0 (<%=tdto.getActivity_request_id() % 150%>).jpg"
+										alt="" class="img-fluid rounded-circle w-50 mb-3">
+									<h3><%=tdto.getRequested_activity_name()%></h3>
 									<h5 class="text-muted"></h5>
-									<p><%=adto.getActivity_description()%></p>
+									<p>
+										<%
+											if (tdto.getStatus().equals("n"))
+															out.print("Activity not available yet");
+														else if (tdto.getStatus().equals("a")) {
+															out.print("Activity is now available");
+										%>
+									</p>
+
+
+									<!-- //////////////////////////////// code for show requested activity //////////////////////////////// -->
 									<div class="d-flex flex-row justify-content-center">
 										<div class="p-4">
-											<input type="hidden" name="activity_id"
-												value=<%=adto.getActivity_id()%>> <input
-												class="btn btn-dark" type="submit" name="show_details"
-												value="details">
+											<input type="hidden" name="name"
+												value="<%=tdto.getRequested_activity_name()%>"> <input
+												class="btn btn-dark" type="submit" name="show_activities"
+												value="View">
 										</div>
 									</div>
+									<!-- ////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+									<%
+										}
+									%>
 								</form>
 							</div>
 						</div>
 					</div>
 					<%
 						}
-						}
+							}
 					%>
-
 				</div>
 			</div>
 		</section>
-		<!-- <div class="w3-row mt-3">
-      <div class="w3-col m2 text-center">
-        <img class="w3-circle" src="https://colorlib.com//polygon/admindek/files/assets/images/avatar-4.jpg">
-      </div>
-      <div class="w3-col m10 w3-container">
-        <h4>Sports <span class="w3-opacity w3-medium">Sep 29, 2014, 9:12 PM</span></h4>
-        <p class="lead"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br>
-      </div>
-    </div>
-    <div class="w3-row mt-3">
-      <div class="w3-col m2 text-center">
-        <img class="w3-circle" src="https://colorlib.com//polygon/admindek/files/assets/images/avatar-4.jpg">
-      </div>
-      <div class="w3-col m10 w3-container">
-        <h4>Sports <span class="w3-opacity w3-medium">Sep 29, 2014, 9:12 PM</span></h4>
-        <p class="lead"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br>
-      </div>
-    </div>
-    <div class="w3-row mt-3">
-      <div class="w3-col m2 text-center">
-        <img class="w3-circle" src="https://colorlib.com//polygon/admindek/files/assets/images/avatar-4.jpg">
-      </div>
-      <div class="w3-col m10 w3-container">
-        <h4>Sports <span class="w3-opacity w3-medium">Sep 29, 2014, 9:12 PM</span></h4>
-        <p class="lead"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br>
-      </div>
-    </div>
-    <div class="w3-row mt-3">
-      <div class="w3-col m2 text-center">
-        <img class="w3-circle" src="https://colorlib.com//polygon/admindek/files/assets/images/avatar-4.jpg">
-      </div>
-      <div class="w3-col m10 w3-container">
-        <h4>Sports <span class="w3-opacity w3-medium">Sep 29, 2014, 9:12 PM</span></h4>
-        <p class="lead"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br>
-      </div>
-    </div> -->
-
-
 
 
 		<!-- Footer -->
 		<footer class="w3-container w3-padding-16 w3-light-grey">
-			<h4>FOOTER</h4>
-
+			<h4></h4>
 		</footer>
 
 		<!-- End page content -->
@@ -306,7 +293,9 @@ html, body, h1, h2, h3, h4, h5 {
 		integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 		crossorigin="anonymous"></script>
 
-	<jsp:include page="search/main.jsp"></jsp:include>
-
+	<jsp:include page="search/requested.jsp"></jsp:include>
 </body>
 </html>
+<%
+	}
+%>
